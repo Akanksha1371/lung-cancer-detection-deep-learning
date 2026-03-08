@@ -1,0 +1,63 @@
+<!-- 1. This file extends the main layout -->
+{% extends "layout.html" %}
+
+<!-- 2. Set the title for this specific page -->
+{% block title %}Admin Dashboard{% endblock %}
+
+<!-- 3. This is the main content for the page -->
+{% block content %}
+<div class="page-content">
+
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-orbitron font-bold text-white">
+            Admin Dashboard
+        </h1>
+        <p class="text-lg text-gray-400 mt-2">
+            User Management
+        </p>
+    </header>
+
+    <!-- User List Card -->
+    <div class="glass-card p-6 md:p-10 max-w-2xl mx-auto">
+        <h2 class="text-2xl font-bold text-white mb-6">
+            Registered Users ({{ users | length }})
+        </h2>
+        
+        <div class="space-y-4">
+            <!-- 
+              This is a Jinja loop.
+              'users' is the variable we pass from the 'admin()' route in app.py
+            -->
+            {% if users %}
+                {% for user in users %}
+                    <div class="glass-card p-4 flex justify-between items-center">
+                        <div>
+                            <p class="text-lg font-semibold text-white">
+                                {{ user.email }}
+                            </p>
+                            <p class="text-sm text-gray-400">
+                                User ID: {{ user.id }}
+                            </p>
+                        </div>
+                        <!-- Show a badge if the user is an admin -->
+                        {% if user.is_admin %}
+                            <span class="bg-cyan-500 text-white text-xs font-bold px-3 py-1 rounded-full">
+                                ADMIN
+                            </span>
+                        {% endif %}
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-center text-gray-400">No users have registered yet.</p>
+            {% endif %}
+        </div>
+    </div>
+
+</div>
+{% endblock %}
+
+<!-- 
+  This page doesn't need any custom JavaScript,
+  so the 'scripts' block is empty.
+-->
+{% block scripts %}{% endblock %}

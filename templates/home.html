@@ -1,0 +1,85 @@
+<!-- 1. This file extends the main layout -->
+{% extends "layout.html" %}
+
+<!-- 2. Set the title for this specific page -->
+{% block title %}Home{% endblock %}
+
+<!-- 3. This is the main content for the page -->
+{% block content %}
+<div class="page-content">
+    
+    <!-- Header Section -->
+    <header class="text-center my-12 md:my-24">
+        <h1 class="text-6xl md:text-8xl font-orbitron font-extrabold mb-4 text-3d-neon">
+            VoxelView AI
+        </h1>
+        <p class="text-xl md:text-2xl font-semibold text-gray-300">
+            AI-Powered Insight for Thoracic CT Scans
+        </p>
+        <p class="text-lg text-cyan-400 mt-3">
+            "Clarity in Diagnosis, Confidence in Care."
+        </p>
+        
+        <!-- Main Action Button -->
+        <div class="mt-12">
+            <a href="{{ url_for('analyzer') }}" class="btn-primary text-xl font-bold rounded-lg py-4 px-10 flex items-center justify-center max-w-xs mx-auto">
+                <i data-lucide="scan-line" class="w-6 h-6 mr-3"></i>
+                Open Analyzer
+            </a>
+        </div>
+    </header>
+    
+    <!-- 6-Class Icon Section -->
+    <div class="glass-card p-6 md:p-10">
+        <h2 class="text-3xl font-bold text-white mb-8 text-center">
+            Explore Lung Conditions
+        </h2>
+        
+        <!-- Grid for the 6 class icons -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            
+            <!-- Link 1: Normal -->
+            <a href="{{ url_for('details', class_name='normal') }}" class="glass-card p-6 text-center cursor-pointer hover:border-cyan-400">
+                <i data-lucide="check-circle" class="w-16 h-16 mx-auto mb-4 text-green-400"></i>
+                <h3 class="text-2xl font-semibold text-white">Normal</h3>
+                <p class="text-gray-400">Healthy lung tissue</p>
+            </a>
+            
+            <!-- Link 2: Benign -->
+            <a href="{{ url_for('details', class_name='benign') }}" class="glass-card p-6 text-center cursor-pointer hover:border-cyan-400">
+                <i data-lucide="shield-check" class="w-16 h-16 mx-auto mb-4 text-yellow-400"></i>
+                <h3 class="text-2xl font-semibold text-white">Benign Cases</h3>
+                <p class="text-gray-400">Non-cancerous nodules</p>
+            </a>
+            
+            <!-- Link 3: Malignant -->
+            <a href="{{ url_for('details', class_name='malignant') }}" class="glass-card p-6 text-center cursor-pointer hover:border-cyan-400">
+                <i data-lucide="alert-triangle" class="w-16 h-16 mx-auto mb-4 text-red-400"></i>
+                <h3 class="text-2xl font-semibold text-white">Malignant Cases</h3>
+                <p class="text-gray-400">General cancerous cases</p>
+            </a>
+            
+            <!-- Link 4: Adenocarcinoma -->
+            <a href="{{ url_for('details', class_name='adeno') }}" class="glass-card p-6 text-center cursor-pointer hover:border-cyan-400">
+                <i data-lucide="dot" class="w-16 h-16 mx-auto mb-4 text-red-400"></i>
+                <h3 class="text-2xl font-semibold text-white">Adenocarcinoma</h3>
+                <p class="text-gray-400">Cancer starting in glands</p>
+            </a>
+            
+            <!-- Link 5: Large Cell Carcinoma -->
+            <a href="{{ url_for('details', class_name='largecell') }}" class="glass-card p-6 text-center cursor-pointer hover:border-cyan-400">
+                <i data-lucide="circle" class="w-16 h-16 mx-auto mb-4 text-red-400"></i>
+                <h3 class="text-2xl font-semibold text-white">Large Cell Carcinoma</h3>
+                <p class="text-gray-400">Large, abnormal cells</p>
+            </a>
+            
+            <!-- Link 6: Squamous Cell Carcinoma -->
+            <a href="{{ url_for('details', class_name='squamous') }}" class="glass-card p-6 text-center cursor-pointer hover:border-cyan-400">
+                <i data-lucide="square" class="w-16 h-16 mx-auto mb-4 text-red-400"></i>
+                <h3 class="text-2xl font-semibold text-white">Squamous Cell Carcinoma</h3>
+                <p class="text-gray-400">Cancer in airway lining</p>
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

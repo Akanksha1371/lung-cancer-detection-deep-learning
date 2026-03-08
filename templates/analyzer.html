@@ -1,0 +1,306 @@
+<!-- 1. This file extends the main layout -->
+{% extends "layout.html" %}
+
+<!-- 2. Set the title for this specific page -->
+{% block title %}Analyzer{% endblock %}
+
+<!-- 3. This is the main content for the page -->
+{% block content %}
+<div class="page-content">
+
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-orbitron font-bold text-white">
+            Scan Analyzer
+        </h1>
+        <p class="text-lg text-gray-400 mt-2">
+            Upload your CT scan to get an AI-powered analysis.
+        </p>
+    </header>
+
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        
+        <!-- === Column 1: Uploader & Prediction === -->
+        <div class="flex flex-col gap-8">
+            
+            <!-- UPLOAD CARD -->
+            <div class="glass-card p-6 md:p-8">
+                <form id="upload-form">
+                    <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
+                        <i data-lucide="upload" class="w-8 h-8 mr-3 text-cyan-400"></i>
+                        1. Upload Your Image
+                    </h2>
+
+                    <!-- Upload Zone -->
+                    <label id="file-drop-zone" for="file-upload" class="relative block w-full p-10 text-center rounded-xl cursor-pointer bg-[rgba(15,12,41,0.7)] border-2 border-dashed border-[var(--bg-mid)] transition-all duration-300 hover:border-cyan-400">
+                        <div id="upload-prompt" class="flex flex-col items-center">
+                            <i data-lucide="image-plus" class="w-16 h-16 mx-auto mb-4 text-gray-500"></i>
+                            <span class="text-lg font-semibold text-white">Drag & Drop or Click to Upload</span>
+                            <span id="file-name" class="text-sm text-cyan-400 block mt-1">No file selected</span>
+                        </div>
+                    </label>
+
+                    <!-- Preview Zone (Hidden by default) -->
+                    <div id="preview-card" class="hidden relative mt-6">
+                        <h3 class="text-xl font-semibold mb-3 text-white">Your Image:</h3>
+                        <button id="clear-preview" type="button" class="absolute -top-3 -right-3 z-10 bg-red-600 hover:bg-red-700 text-white rounded-full p-1 shadow-lg transition-transform hover:scale-110">
+                            <i data-lucide="x" class="w-5 h-5"></i>
+                        </button>
+                        <img id="image-preview" src="#" alt="Your uploaded image" class="rounded-lg w-full max-h-96 object-contain bg-black p-2 border border-gray-700">
+                    </div>
+
+                    <!-- Hidden file input -->
+                    <input id="file-upload" name="file" type="file" class="hidden" accept="image/png, image/jpeg">
+                    
+                    <!-- Analyze Button -->
+                    <button type="submit" id="analyze-button" class="btn-primary w-full text-lg font-bold rounded-lg py-4 px-6 mt-6 shadow-lg flex items-center justify-center opacity-50 cursor-not-allowed" disabled>
+                        <i data-lucide="brain-circuit" class="w-6 h-6 mr-3"></i>
+                        Analyze Scan
+                    </button>
+                </form>
+            </div>
+
+            <!-- RESULT CARD (Hidden by default, populated by JavaScript) -->
+            <div id="result-card" class="glass-card p-6 md:p-8 hidden">
+                <h2 class="text-3xl font-bold text-white mb-6">Analysis Result</h2>
+                
+                <!-- This is a placeholder for errors -->
+                <div id="error-message" class="hidden p-4 rounded-lg bg-red-900/50 border border-red-500 text-red-300"></div>
+
+                <!-- This holds the successful result -->
+                <div id="success-result" class="grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+                    
+                    <!-- Result Image -->
+                    <div id="result-image-container" class="hidden">
+                        <h3 class="text-xl font-semibold mb-3 text-white">Your Scan:</h3>
+                        <img id="result-image" src="" alt="Your uploaded image" class="rounded-lg w-full object-contain bg-black p-2 border border-gray-700">
+                    </div>
+
+                    <!-- Result Text -->
+                    <div class="p-4 rounded-lg" id="result-text-box">
+                        <p class="text-lg text-gray-300 mb-2">The model predicts:</p>
+                        
+                        <!-- === THIS IS THE FIX === -->
+                        <!-- 1. Changed text-4xl to text-3xl -->
+                        <!-- 2. Added break-words to wrap long text -->
+                        <h3 class="text-3xl font-extrabold break-words" id="result-text"></h3>
+                        
+                        <p class="text-2xl font-semibold mt-2" id="result-confidence"></p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- === Column 2: Info & Example === -->
+        <div class="glass-card p-6 md:p-8 h-fit"> <!-- h-fit makes it stick to its own height -->
+            <h2 class="text-3xl font-bold text-white mb-6 flex items-center">
+                <i data-lucide="image-check" class="w-8 h-8 mr-3 text-cyan-400"></i>
+                What to Upload
+            </h2>
+            <p class="text-gray-400 mb-4">Upload an axial (top-down) CT scan. Both "Lung Window" (detailed lungs) and "Mediastinal Window" (clear heart) are supported.</p>
+            <div class="space-y-4">
+                <img src="https://prod-images-static.radiopaedia.org/images/158100/158100_gallery.jpeg" 
+                     alt="Example of an axial CT scan in a lung window"
+                     class="rounded-lg border-2 border-gray-700 w-full object-cover">
+                <img src="https://prod-images-static.radiopaedia.org/images/158098/158098_gallery.jpeg" 
+                     alt="Example of an axial CT scan in a mediastinal window"
+                     class="rounded-lg border-2 border-gray-700 w-full object-cover">
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+
+<!-- 4. This block adds JavaScript that ONLY runs on this page -->
+{% block scripts %}
+<script>
+    console.log("Analyzer script loading...");
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log("DOM fully loaded for analyzer.");
+
+        // --- Get all our elements ---
+        const uploadForm = document.getElementById('upload-form');
+        const fileUpload = document.getElementById('file-upload');
+        const fileNameSpan = document.getElementById('file-name');
+        const previewCard = document.getElementById('preview-card');
+        const previewImg = document.getElementById('image-preview');
+        const dropZone = document.getElementById('file-drop-zone');
+        const clearPreviewBtn = document.getElementById('clear-preview');
+        const analyzeButton = document.getElementById('analyze-button');
+
+        // Result card elements
+        const resultCard = document.getElementById('result-card');
+        const errorBox = document.getElementById('error-message');
+        const successBox = document.getElementById('success-result');
+        const resultImgContainer = document.getElementById('result-image-container');
+        const resultImg = document.getElementById('result-image');
+        const resultText = document.getElementById('result-text');
+        const resultConfidence = document.getElementById('result-confidence');
+        
+        let currentFile = null;
+
+        // --- 1. File Upload Logic ---
+        function handleFile(file) {
+            if (!file) { return; }
+            if (!file.type.startsWith('image/')) {
+                alert('Invalid file type. Please upload an image (PNG or JPEG).');
+                return;
+            }
+
+            console.log("Handling file:", file.name);
+            currentFile = file;
+            fileNameSpan.textContent = file.name;
+            
+            try {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const dataUrl = e.target.result;
+                    previewImg.src = dataUrl;
+                    sessionStorage.setItem('uploadedImage', dataUrl); // Store image for result page
+                };
+                reader.readAsDataURL(file);
+
+                dropZone.classList.add('hidden'); 
+                previewCard.classList.remove('hidden'); 
+                
+                analyzeButton.disabled = false;
+                analyzeButton.classList.remove('opacity-50', 'cursor-not-allowed');
+                console.log("Analyze button enabled.");
+
+            } catch (e) {
+                console.error("FileReader error:", e);
+                alert("Error reading file.");
+            }
+        }
+        
+        // --- 2. Clear File Logic ---
+        function clearFile() {
+            console.log("Clearing file.");
+            currentFile = null;
+            fileUpload.value = null; 
+            fileNameSpan.textContent = 'No file selected';
+            previewCard.classList.add('hidden'); 
+            dropZone.classList.remove('hidden'); 
+            sessionStorage.removeItem('uploadedImage');
+            
+            analyzeButton.disabled = true;
+            analyzeButton.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            // Hide the result card too
+            resultCard.classList.add('hidden');
+            errorBox.classList.add('hidden');
+            successBox.classList.remove('hidden'); // Show success box by default
+        }
+
+        fileUpload.onchange = (event) => handleFile(event.target.files[0]);
+        clearPreviewBtn.onclick = (e) => { e.preventDefault(); clearFile(); };
+
+        // --- 3. Drag & Drop Logic ---
+        dropZone.ondragover = (event) => {
+            event.preventDefault();
+            dropZone.classList.add('border-cyan-400', 'bg-[rgba(36,36,62,0.8)]');
+        };
+        dropZone.ondragleave = () => {
+            dropZone.classList.remove('border-cyan-400', 'bg-[rgba(36,36,62,0.8)]');
+        };
+        dropZone.ondrop = (event) => {
+            event.preventDefault();
+            dropZone.classList.remove('border-cyan-400', 'bg-[rgba(36,36,62,0.8)]');
+            const file = event.dataTransfer.files[0];
+            fileUpload.files = event.dataTransfer.files;
+            handleFile(file);
+        };
+
+        // --- 4. Form Submission (Simplified API Call) ---
+        uploadForm.onsubmit = (event) => {
+            event.preventDefault(); // <-- IMPORTANT: Stop page reload
+            console.log("Form submitted via JavaScript.");
+            if (!currentFile) { alert("Please select a file first."); return; }
+            
+            analyzeButton.disabled = true;
+            analyzeButton.innerHTML = '<div class="loader mx-auto"></div>'; // Show spinner
+            
+            // Clear old results/errors
+            resultCard.classList.add('hidden');
+            errorBox.classList.add('hidden');
+            successBox.classList.remove('hidden');
+            resultText.className = 'text-3xl font-extrabold break-words'; // Reset color classes, but keep text-3xl and break-words
+
+            const formData = new FormData();
+            formData.append('file', currentFile);
+            
+            fetch("{{ url_for('predict_api') }}", {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => {
+                        throw new Error(err.error || 'Server error');
+                    });
+                }
+                return response.json(); 
+            })
+            .then(data => {
+                // SUCCESS CASE: data = { prediction: "...", confidence: ... }
+                console.log("Prediction received:", data);
+                
+                if (data.error) { throw new Error(data.error); }
+                
+                // 1. Populate text
+                resultText.innerText = data.prediction;
+                resultConfidence.innerText = `${data.confidence.toFixed(2)}% Confidence`;
+
+                // 2. Color code the result (Handles all 6 classes)
+                const predictionLower = data.prediction.toLowerCase();
+                if (predictionLower.includes('normal')) {
+                    resultText.classList.add('text-green-400');
+                } else if (predictionLower.includes('benign')) {
+                    resultText.classList.add('text-yellow-400');
+                } else {
+                    // This will catch 'malignant', 'carcinoma', 'adeno', etc.
+                    resultText.classList.add('text-red-400');
+                    // *** THE STRAY 'S' WAS HERE. IT IS NOW REMOVED. ***
+                }
+                
+                // 3. Show the image
+                const storedImage = sessionStorage.getItem('uploadedImage');
+                if (storedImage) {
+                    resultImgContainer.classList.remove('hidden');
+                    resultImg.src = storedImage;
+                } else {
+                    resultImgContainer.classList.add('hidden');
+                }
+                
+                // 4. Show the card
+                successBox.classList.remove('hidden');
+                resultCard.classList.remove('hidden');
+            })
+            .catch(error => {
+                // FAILURE CASE
+                console.error('Prediction failed:', error);
+                
+                // Show the error in the UI
+                errorBox.innerText = `Analysis Failed: ${error.message}`;
+                errorBox.classList.remove('hidden');
+                
+                successBox.classList.add('hidden'); 
+                resultCard.classList.remove('hidden');
+            })
+            .finally(() => {
+                // ALWAYS run this: Reset the button
+                analyzeButton.disabled = false;
+                analyzeButton.innerHTML = '<i data-lucide="brain-circuit" class="w-6 h-6 mr-3"></i> Analyze Scan';
+                try {
+                    // We need to re-run createIcons because the button's
+                    // HTML was replaced.
+                    lucide.createIcons();
+                } catch(e){}
+            });
+        };
+        
+    }); // End DOMContentLoaded
+</script>
+{% endblock %}

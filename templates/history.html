@@ -1,0 +1,85 @@
+<!-- 1. This file extends the main layout -->
+{% extends "layout.html" %}
+
+<!-- 2. Set the title for this specific page -->
+{% block title %}Scan History{% endblock %}
+
+<!-- 3. This is the main content for the page -->
+{% block content %}
+<div class="page-content">
+
+    <header class="text-center mb-12">
+        <h1 class="text-5xl font-orbitron font-bold text-white">
+            Your Scan History
+        </h1>
+        <p class="text-lg text-gray-400 mt-2">
+            Here are all the scans you have analyzed.
+        </p>
+    </header>
+
+    <!-- Main container for the history list -->
+    <div class="glass-card p-6 md:p-10 max-w-4xl mx-auto">
+        <div class="space-y-6">
+
+            <!-- 
+              This is a Jinja loop.
+              'scans' is the variable we pass from the 'history()' route in app.py
+            -->
+            {% if scans %}
+                {% for scan in scans %}
+                    <!-- Single History Item Card -->
+                    <div class="glass-card p-5 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                        
+                        <div class="flex-1">
+                            <!-- Set color class based on prediction text -->
+                            {% set color_class = 'text-white' %}
+                            {% if 'normal' in scan.prediction.lower() %}
+                                {% set color_class = 'text-green-400' %}
+                            {% elif 'benign' in scan.prediction.lower() %}
+                                {% set color_class = 'text-yellow-400' %}
+                            {% elif 'malignant' in scan.prediction.lower() or 'carcinoma' in scan.prediction.lower() or 'adeno' in scan.prediction.lower() %}
+                                {% set color_class = 'text-red-400' %}
+                            {% endif %}
+                            
+                            <!-- Prediction Result -->
+                            <h3 class="text-2xl font-bold {{ color_class }}">
+                                {{ scan.prediction }}
+                            </h3>
+                            
+                            <!-- Confidence -->
+                            <p class="text-lg font-semibold text-white">
+                                {{ "%.2f"|format(scan.confidence) }}% Confidence
+                            </p>
+                            
+                            <!-- Filename -->
+                            <p class="text-sm text-gray-400 mt-1">
+                                Original file: {{ scan.filename }}
+                            </p>
+                        </div>
+                        
+                        <!-- Timestamp -->
+                        <div class="flex-shrink-0 text-gray-400 text-sm text-left sm:text-right">
+                            <p>Analyzed on:</p>
+                            <!-- 
+                              We format the timestamp.
+                              Example: 05 Nov 2025, 07:00 PM
+                            -->
+                            <p>{{ scan.timestamp.strftime('%d %b %Y, %I:%M %p') }}</p>
+                        </div>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <!-- This message shows if the 'scans' list is empty -->
+                <div class="text-center py-10">
+                    <i data-lucide="history" class="w-16 h-16 mx-auto mb-4 text-gray-500"></i>
+                    <h3 class="text-2xl font-semibold text-white">No History Found</h3>
+                    <p class="text-gray-400 mt-2">
+                        Your analyzed scans will appear here after you use the 
+                        <a href="{{ url_for('analyzer') }}" class="text-cyan-400 hover:text-cyan-300">Analyzer</a>.
+                    </p>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

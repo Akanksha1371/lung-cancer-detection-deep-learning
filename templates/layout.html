@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- The 'title' block can be overridden by child templates -->
+    <title>{% block title %}{% endblock %} - VoxelView AI</title>
+    
+    <!-- Load Tailwind & Icons -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide-cdn"></script>
+
+    <!-- Custom Fonts & CSS -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Orbitron:wght@700;800&display=swap');
+        
+        :root {
+            --bg-dark: #0f0c29;
+            --bg-mid: #302b63;
+            --bg-light: #24243e;
+            --accent-purple: #a855f7;
+            --accent-pink: #f72585;
+            --accent-blue: #4cc9f0;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, var(--bg-dark), var(--bg-mid));
+            background-attachment: fixed; /* Prevents gradient from scrolling */
+            color: #e5e7eb;
+            overflow-x: hidden;
+        }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+
+        /* 3D Neon Text Effect */
+        .text-3d-neon {
+            text-shadow:
+                0 0 5px var(--accent-blue),
+                0 0 10px var(--accent-blue),
+                0 0 20px var(--accent-blue),
+                0 0 40px var(--accent-pink),
+                0 0 80px var(--accent-pink);
+            animation: flicker 3s infinite alternate;
+        }
+        @keyframes flicker {
+            0%, 18%, 22%, 25%, 53%, 57%, 100% {
+                text-shadow:
+                    0 0 4px var(--accent-blue),
+                    0 0 11px var(--accent-blue),
+                    0 0 19px var(--accent-blue),
+                    0 0 40px var(--accent-pink),
+                    0 0 80px var(--accent-pink);
+            }
+            20%, 24%, 55% { text-shadow: none; }
+        }
+        
+        /* Glassmorphism Card */
+        .glass-card {
+            background: rgba(36, 36, 62, 0.6); /* var(--bg-light) */
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 1rem;
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+        /* no-hover class disables this effect (used on navbar) */
+        .glass-card:hover:not(.no-hover) { 
+            border-color: var(--accent-blue);
+            box-shadow: 0 0 25px rgba(76, 201, 240, 0.3);
+        }
+        
+        .btn-primary {
+            background-color: var(--accent-pink); 
+            color: white; 
+            transition: all 0.3s ease;
+        }
+        .btn-primary:hover {
+            background-color: #B5179E; /* Darker pink */
+            box-shadow: 0 0 20px rgba(247, 37, 133, 0.5);
+            transform: translateY(-2px);
+        }
+        
+        /* --- NEON BUTTON for Register --- */
+        .btn-neon {
+            background-color: transparent;
+            border: 2px solid var(--accent-blue);
+            color: var(--accent-blue);
+            transition: all 0.3s ease;
+            box-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+        }
+        .btn-neon:hover {
+            background-color: var(--accent-blue);
+            color: var(--bg-dark);
+            box-shadow: 0 0 25px rgba(76, 201, 240, 0.8);
+            transform: translateY(-2px);
+        }
+        
+        .form-input {
+            background-color: rgba(15, 12, 41, 0.7); /* var(--bg-dark) */
+            border: 1px solid var(--bg-mid); 
+            color: white;
+        }
+        .form-input:focus { 
+            border-color: var(--accent-blue); 
+            box-shadow: none; 
+            outline: none; 
+        }
+
+        /* Page Transitions */
+        .page-content {
+            animation: fadeIn 0.6s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(15px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Loading Spinner */
+        .loader {
+            border: 4px solid #f3f3f3; 
+            border-top: 4px solid var(--accent-pink);
+            border-radius: 50%; 
+            width: 40px; 
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin { 
+            0% { transform: rotate(0deg); } 
+            100% { transform: rotate(360deg); } 
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+
+    <!-- === SMART NAVIGATION BAR === -->
+    <nav class="glass-card no-hover max-w-7xl mx-auto my-4 p-4 rounded-lg z-50 sticky top-4">
+        <div class="flex justify-between items-center">
+            
+            <!-- Logo (links to landing or home) -->
+            {% if current_user.is_authenticated %}
+                <!-- If logged in, logo goes to /home -->
+                <a href="{{ url_for('home') }}" class="font-orbitron text-2xl font-bold text-white hover:text-cyan-400 transition-colors">
+                    VoxelView AI
+                </a>
+            {% else %}
+                 <!-- If logged out, logo goes to / (landing) -->
+                 <a href="{{ url_for('landing') }}" class="font-orbitron text-2xl font-bold text-white hover:text-cyan-400 transition-colors">
+                    VoxelView AI
+                </a>
+            {% endif %}
+            
+            <!-- Nav Links -->
+            <div class="flex items-center">
+                <!-- current_user variable comes from Flask-Login -->
+                {% if current_user.is_authenticated %}
+                    <!-- LOGGED-IN LINKS -->
+                    <a href="{{ url_for('home') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md font-medium">Home</a>
+                    <a href="{{ url_for('analyzer') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md font-medium">Analyzer</a>
+                    <a href="{{ url_for('history') }}" class="text-gray-300 hover:text-white px-3 py-2 rounded-md font-medium">History</a>
+                    
+                    <!-- === ADMIN LINK === -->
+                    <!-- This link only appears if 'current_user.is_admin' is True -->
+                    {% if current_user.is_admin %}
+                    <a href="{{ url_for('admin') }}" class="ml-2 btn-neon font-medium px-4 py-2 rounded-lg text-sm">
+                        Admin
+                    </a>
+                    {% endif %}
+                    
+                    <a href="{{ url_for('signout') }}" class="ml-4 bg-gray-700 hover:bg-gray-600 font-medium text-white px-4 py-2 rounded-lg transition-colors">
+                        Sign Out
+                    </a>
+                {% else %}
+                    <!-- PUBLIC LINKS (for landing, signin, signup pages) -->
+                    <a href="{{ url_for('signin') }}" class="bg-gray-700 hover:bg-gray-600 font-medium text-white px-4 py-2 rounded-lg transition-colors">
+                        Sign In
+                    </a>
+                    <!-- NEON REGISTER BUTTON (as requested) -->
+                    <a href="{{ url_for('signup') }}" class="btn-neon ml-2 font-bold px-4 py-2 rounded-lg">
+                        Register
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    </nav>
+    
+    <!-- Main Content Block -->
+    <main class="max-w-7xl mx-auto p-4">
+        
+        <!-- Flask Flash Messages (for "Login successful", "Email exists", etc.) -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="p-4 mb-4 rounded-md text-white
+                        {% if category == 'success' %} bg-green-600/90
+                        {% elif category == 'danger' %} bg-red-600/90
+                        {% else %} bg-blue-600/90
+                        {% endif %}">
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- This 'content' block is where child pages will inject their HTML -->
+        {% block content %}{% endblock %}
+    </main>
+
+    <!-- Activate Lucide Icons -->
+    <script>
+        try {
+            // This script runs on every page
+            lucide.createIcons();
+        } catch (e) {
+            console.error("Lucide icons failed to load.", e);
+        }
+    </script>
+    
+    <!-- This 'scripts' block is for child pages to add their own JavaScript -->
+    {% block scripts %}{% endblock %}
+</body>
+</html>

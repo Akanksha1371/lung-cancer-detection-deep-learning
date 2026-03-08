@@ -1,0 +1,65 @@
+<!-- 1. This file extends the main layout -->
+{% extends "layout.html" %}
+
+<!-- 2. Set the title for this specific page -->
+{% block title %}Sign In{% endblock %}
+
+<!-- 3. This is the main content for the page -->
+{% block content %}
+<div class="page-content flex flex-col items-center justify-center pt-12 md:pt-24">
+    
+    <!-- Use the 'glass-card' style from layout.html -->
+    <div class="glass-card p-8 md:p-12 w-full max-w-md">
+        
+        <h2 class="font-orbitron text-3xl font-bold text-center text-white mb-8">
+            Sign In to VoxelView
+        </h2>
+        
+        <!-- 
+          This form will POST to our Flask app.
+          The 'action' is left empty, so it posts to the
+          current URL (which is '/signin').
+        -->
+        <form method="POST" action="" class="space-y-6">
+            
+            <!-- Email Field -->
+            <div>
+                <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email Address</label>
+                <input id="email" 
+                       name="email" 
+                       type="email" 
+                       autocomplete="email" 
+                       required 
+                       class="form-input w-full p-3 rounded-lg"
+                       placeholder="you@example.com">
+            </div>
+
+            <!-- Password Field -->
+            <div>
+                <label for="password" class="block text-sm font-medium text-gray-300 mb-2">Password</label>
+                <input id="password" 
+                       name="password" 
+                       type="password" 
+                       autocomplete="current-password" 
+                       required 
+                       class="form-input w-full p-3 rounded-lg"
+                       placeholder="••••••••">
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn-primary w-full text-lg font-bold rounded-lg py-3">
+                Sign In
+            </button>
+            
+            <!-- Link to Sign Up Page -->
+            <p class="text-center text-gray-400">
+                Don't have an account? 
+                <!-- This 'url_for' function comes from Flask -->
+                <a href="{{ url_for('signup') }}" class="font-semibold text-cyan-400 hover:text-cyan-300">
+                    Sign Up
+                </a>
+            </p>
+        </form>
+    </div>
+</div>
+{% endblock %}

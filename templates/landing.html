@@ -1,0 +1,49 @@
+<!-- 1. This file extends the main layout -->
+{% extends "layout.html" %}
+
+<!-- 2. Set the title -->
+{% block title %}Welcome{% endblock %}
+
+<!-- 3. This is the main content for the page -->
+{% block content %}
+<div class="page-content">
+
+    <!-- Header Section -->
+    <header class="text-center my-12 md:my-24">
+        <h1 class="text-6xl md:text-8xl font-orbitron font-extrabold mb-4 text-3d-neon">
+            VoxelView AI
+        </h1>
+        <p class="text-xl md:text-2xl font-semibold text-gray-300">
+            AI-Powered Insight for Thoracic CT Scans
+        </p>
+        <p class="text-lg text-cyan-400 mt-3">
+            "Clarity in Diagnosis, Confidence in Care."
+        </p>
+    </header>
+    
+    <!-- App Description Section -->
+    <div class="glass-card p-8 md:p-12 max-w-4xl mx-auto text-center">
+        <h2 class="text-3xl font-bold text-white mb-6">What is VoxelView AI?</h2>
+        <p class="text-lg text-gray-300 leading-relaxed">
+            VoxelView AI is an advanced deep learning tool designed to assist medical professionals and students. 
+            By uploading a thoracic (chest) CT scan, our model, trained on thousands of images, 
+            provides a preliminary classification of lung nodules into one of six categories: 
+            <strong>Normal, Benign, Malignant, Adenocarcinoma, Large Cell, or Squamous Cell Carcinoma.</strong>
+        </p>
+        <p class="text-lg text-gray-300 leading-relaxed mt-4">
+            Our system provides a confidence score, stores your analysis history, and offers detailed information on each classification.
+        </p>
+        <p class="text-md text-yellow-400 font-semibold mt-8 bg-yellow-900/30 p-4 rounded-lg border border-yellow-700">
+            <strong>Disclaimer:</strong> This tool is for educational and research purposes only. 
+            It is <strong>not</strong> a substitute for professional medical advice, diagnosis, or treatment. 
+            All results must be verified by a qualified radiologist.
+        </p>
+        
+        <div class="mt-10">
+            <a href="{{ url_for('signup') }}" class="btn-neon text-xl font-bold rounded-lg py-4 px-10">
+                Get Started - Register Now
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

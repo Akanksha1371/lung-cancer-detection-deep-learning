@@ -1,0 +1,197 @@
+<!-- 1. This file extends the main layout -->
+{% extends "layout.html" %}
+
+<!-- 2. Set the title based on the class_name variable -->
+{% block title %}{{ class_name | title }}{% endblock %}
+
+<!-- 3. This is the main content for the page -->
+{% block content %}
+<div class="page-content">
+
+    <!-- Main content card -->
+    <div class="glass-card p-6 md:p-10 max-w-4xl mx-auto">
+        
+        <!-- Back Button -->
+        <a href="{{ url_for('home') }}" class="inline-flex items-center text-lg font-medium text-cyan-400 hover:text-cyan-300 transition mb-6">
+            <i data-lucide="chevron-left" class="w-6 h-6 mr-1"></i>
+            Back to Home
+        </a>
+
+        <!-- 
+          This is where the Jinja magic happens.
+          We check the 'class_name' variable passed from Flask.
+        -->
+
+        <!-- === 1. NORMAL === -->
+        {% if class_name == 'normal' %}
+        <header class="flex items-center mb-6">
+            <i data-lucide="check-circle" class="w-16 h-16 mr-6 text-green-400 flex-shrink-0"></i>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-orbitron font-bold text-white">Normal Lung Tissue</h1>
+                <p class="text-xl text-gray-400">Represents healthy, non-cancerous scan results.</p>
+            </div>
+        </header>
+        <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">What this classification means</h2>
+                <p>A "Normal" classification indicates that the AI model did not detect significant signs of nodules, masses, or other abnormalities associated with cancer. The lung tissue (parenchyma) appears clear and properly aerated, consistent with a healthy individual.</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">CT Scan Features</h2>
+                <ul class="list-disc list-outside ml-5 space-y-2">
+                    <li><strong>Lung Parenchyma:</strong> Appears dark (black), indicating it is properly filled with air.</li>
+                    <li><strong>Blood Vessels:</strong> Visible as a normal, branching tree of white structures.</li>
+                    <li><strong>Airways (Bronchi):</strong> Appear as dark tubes with thin, barely visible walls.</li>
+                    <li><strong>Absence of Abnormalities:</strong> No "ground-glass" opacities, no solid masses (nodules), and no enlarged lymph nodes.</li>
+                </ul>
+            </section>
+        </div>
+
+        <!-- === 2. BENIGN === -->
+        {% elif class_name == 'benign' %}
+        <header class="flex items-center mb-6">
+            <i data-lucide="shield-check" class="w-16 h-16 mr-6 text-yellow-400 flex-shrink-0"></i>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-orbitron font-bold text-white">Benign Cases</h1>
+                <p class="text-xl text-gray-400">Non-cancerous nodules or tumors.</p>
+            </div>
+        </header>
+        <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">What this classification means</h2>
+                <p>A benign nodule is an abnormal growth in the lung that is **not cancerous**. It cannot spread (metastasize) to other parts of the body. Common examples include granulomas (scars from a past infection like tuberculosis) or hamartomas (a disorganized growth of normal lung tissue).</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Symptoms</h2>
+                <p>Benign nodules almost never cause symptoms. They are typically asymptomatic and are found by accident on a chest X-ray or CT scan performed for an unrelated reason (e.g., after an injury).</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Diagnosis</h2>
+                <p>Radiologists diagnose a nodule as likely benign by observing its characteristics on a CT scan:</p>
+                <ul class="list-disc list-outside ml-5 space-y-2">
+                    <li><strong>Size:</strong> Usually small (less than 8-10mm).</li>
+                    <li><strong>Borders:</strong> Smooth, well-defined, and regular borders.</li>
+                    <li><strong>Calcification:</strong> The presence of dense, solid white calcification throughout the nodule is a strong indicator of a benign cause.</li>
+                </ul>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Cure / Treatment</h2>
+                <p>The standard "treatment" is observation. A doctor will typically recommend a follow-up CT scan in 6-12 months to confirm the nodule is stable and not growing. If it remains unchanged for two years, it is considered definitively benign and no further action is needed.</p>
+            </section>
+        </div>
+        
+        <!-- === 3. MALIGNANT === -->
+        {% elif class_name == 'malignant' %}
+        <header class="flex items-center mb-6">
+            <i data-lucide="alert-triangle" class="w-16 h-16 mr-6 text-red-400 flex-shrink-0"></i>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-orbitron font-bold text-white">Malignant Cases</h1>
+                <p class="text-xl text-gray-400">General classification for cancerous tumors.</p>
+            </div>
+        </header>
+        <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">What this classification means</h2>
+                <p>A malignant tumor is **cancerous**. It is made of abnormal cells that grow uncontrollably. If not treated, these tumors can invade nearby tissues and spread (metastasize) through the blood or lymph system to other parts of the body. This is a general category that includes the specific types below (Adenocarcinoma, etc.).</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Symptoms</h2>
+                <p>In early stages, lung cancer may cause no symptoms. As it progresses, common symptoms can include:</p>
+                <ul class="list-disc list-outside ml-5 space-y-2">
+                    <li>A persistent cough that doesn't go away or gets worse.</li>
+                    <li>Coughing up blood (hemoptysis).</li>
+                    <li>Chest pain, shortness of breath, or wheezing.</li>
+                    <li>Hoarseness or unexplained weight loss.</li>
+                </ul>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Diagnosis</h2>
+                <p>A suspicious nodule on a CT scan is the first step. A definitive diagnosis is made with a **biopsy**, where a small sample of the nodule is removed (using a needle or a scope) and examined by a pathologist.</p>
+            </section>
+        </div>
+
+        <!-- === 4. ADENOCARCINOMA === -->
+        {% elif class_name == 'adeno' %}
+        <header class="flex items-center mb-6">
+            <i data-lucide="dot" class="w-16 h-16 mr-6 text-red-400 flex-shrink-0"></i>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-orbitron font-bold text-white">Adenocarcinoma</h1>
+                <p class="text-xl text-gray-400">A specific type of malignant cancer.</p>
+            </div>
+        </header>
+        <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">What it Is</h2>
+                <p>Adenocarcinoma is the **most common type of lung cancer**, especially in non-smokers (though it also occurs in smokers). It starts in the glandular cells on the outer parts of the lungs that produce mucus. It tends to grow more slowly than other types.</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Diagnosis</h2>
+                <p>It often appears on a CT scan as a "solitary pulmonary nodule" or a "ground-glass opacity" in the periphery (outer edges) of the lung. A **biopsy** is required for confirmation. Doctors will also perform genetic testing on the biopsy sample to look for specific mutations (like EGFR, ALK, KRAS) that can be treated with specific drugs.</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Cure / Treatment</h2>
+                <p>The cure depends on the stage. If caught early (Stage I or II), **surgery (lobectomy)** to remove the tumor can be curative. In more advanced stages (Stage III or IV), treatment involves a combination of **chemotherapy, radiation therapy, and/or immunotherapy**. The most effective treatment for advanced cases is often **targeted therapy**—pills that specifically target the genetic mutations (like EGFR) found during diagnosis.</p>
+            </section>
+        </div>
+
+        <!-- === 5. LARGE CELL CARCINOMA === -->
+        {% elif class_name == 'largecell' %}
+        <header class="flex items-center mb-6">
+            <i data-lucide="circle" class="w-16 h-16 mr-6 text-red-400 flex-shrink-0"></i>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-orbitron font-bold text-white">Large Cell Carcinoma</h1>
+                <p class="text-xl text-gray-400">A specific type of malignant cancer.</p>
+            </div>
+        </header>
+        <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">What it Is</h2>
+                <p>This is a fast-growing, "undifferentiated" type of non-small cell lung cancer. When viewed under a microscope, the cancer cells are very large and abnormal, lacking the features of other types. It can appear in any part of the lung and tends to spread quickly.</p>
+            </section>
+             <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Symptoms</h2>
+                <p>Because it grows quickly, it often causes symptoms related to its size and spread, such as chest pain, shortness of breath, and cough. It can also be associated with "paraneoplastic syndromes" (hormones released by the tumor that cause symptoms in other parts of the body).</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Diagnosis & Treatment</h2>
+                <p>Diagnosis is made via biopsy. Treatment is aggressive due to its fast growth. If it hasn't spread, **surgery** is an option. More often, **chemotherapy** and **radiation therapy** are the primary treatments. It is less likely to respond to targeted therapies but may respond to **immunotherapy**.</p>
+            </section>
+        </div>
+
+        <!-- === 6. SQUAMOUS CELL CARCINOMA === -->
+        {% elif class_name == 'squamous' %}
+        <header class="flex items-center mb-6">
+            <i data-lucide="square" class="w-16 h-16 mr-6 text-red-400 flex-shrink-0"></i>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-orbitron font-bold text-white">Squamous Cell Carcinoma</h1>
+                <p class="text-xl text-gray-400">A specific type of malignant cancer.</p>
+            </div>
+        </header>
+        <div class="space-y-6 text-lg text-gray-300 leading-relaxed">
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">What it Is</h2>
+                <p>This type of cancer starts in the squamous cells, which are the thin, flat cells that line the inside of the airways (bronchi) in the lungs. It is **very strongly linked to a history of smoking** and is usually found in the central part of the lungs, near the main airways (bronchial tubes).</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Symptoms</h2>
+                <p>Because it grows in the central airways, it often causes symptoms earlier than other types by blocking airflow. These can include a persistent **cough, coughing up blood (hemoptysis)**, wheezing, and recurrent lung infections (pneumonia) in the same spot.</p>
+            </section>
+            <section>
+                <h2 class="text-2xl font-bold text-cyan-400 mb-2">Cure / Treatment</h2>
+                <p>Treatment is based on stage. Early-stage tumors may be treated with **surgery**. For more advanced tumors, **chemotherapy and radiation therapy** (often given together) are very common. In recent years, **immunotherapy** (which boosts the body's own immune system to fight the cancer) has become a highly effective first-line treatment for advanced squamous cell lung cancer.</p>
+            </section>
+
+        <!-- === 7. FALLBACK / ERROR === -->
+        {% else %}
+        <header class="flex items-center mb-6">
+            <i data-lucide="x-circle" class="w-16 h-16 mr-6 text-gray-500 flex-shrink-0"></i>
+            <div>
+                <h1 class="text-4xl md:text-5xl font-orbitron font-bold text-white">Unknown Class</h1>
+                <p class="text-xl text-gray-400">Details not found for "{{ class_name }}".</f>
+            </div>
+        </header>
+        {% endif %}
+
+    </div>
+</div>
+{% endblock %}
